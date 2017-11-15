@@ -40,8 +40,12 @@ class Parameter extends React.Component {
   static propTypes = {
     value: object.isRequired,
     classes: object.isRequired,
-  };
-  
+  }
+
+  handleSchemaClick = () => {
+    store.uiStore.setDialogOpen(true);
+  }
+
   render() {
     const { classes } = this.props;
     const parameter = this.props.value;
@@ -83,22 +87,30 @@ class Parameter extends React.Component {
           <MenuItem value={'body'}>body</MenuItem>
         </TextField>
         {
-          parameter.locatedIn === 'body' 
-          ? (
+          (parameter.locatedIn === 'body' && parameter.schema.$ref)
+          && (
             <TextField
-              select
               label="Schema"
-              margin="normal"
-              value={parameter.schema || 'empty'}
+              value={parameter.schema.$ref}
               className={classes.iptSchema}
-            >
-              {Object.keys(definitions).map(def => 
-                <MenuItem key={def} value={def}>{def.replace('#/definitions/', '')}</MenuItem>
-              )}
-              <MenuItem key={'empty'} value={'empty'}>Empty Object</MenuItem>
-            </TextField>
+            />
           )
-          : (
+        }
+        {
+          (parameter.locatedIn === 'body' && !parameter.schema.$ref)
+          && (
+            <TextField
+              multiline
+              label="Schema"
+              className={classes.iptSchema}
+              onClick={this.handleSchemaClick}
+              value={JSON.stringify(parameter.schema, null, 2)}
+            />
+          )
+        }
+        {
+          parameter.locatedIn !== 'body'
+          && (
             <TextField
               select
               label="Type"

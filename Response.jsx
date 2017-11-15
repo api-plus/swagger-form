@@ -15,9 +15,13 @@ const styles = theme => ({
     paddingRight: '10px'
   },
   iptDesc: {
-    width: '30%',
+    width: '50%',
     paddingRight: '10px'
   },
+  iptSchema: {
+    width: '30%',
+    paddingRight: '10px'
+  }
 });
 
 @observer
@@ -26,10 +30,15 @@ class Response extends React.Component {
     value: object.isRequired,
     classes: object.isRequired,
   };
+
+  handleSchemaEditorTriggerClick = () => {
+    console.log(this.props.value);
+  }
   
   render() {
     const { classes, value } = this.props;
-
+    const definitions = store.swagger.definitions;
+    
     return (
       <span className={this.props.className}>
         <TextField
@@ -49,7 +58,25 @@ class Response extends React.Component {
           value={value.description}
           className={classes.iptDesc}
         />
-        json-schema-editor
+
+        <TextField
+          label="Schema"
+          value={'click to edit'}
+          className={classes.iptSchema}
+          onClick={this.handleSchemaEditorTriggerClick}
+        />
+        {/* <TextField
+          select
+          label="Schema"
+          margin="normal"
+          value={'empty'}
+          className={classes.iptSchema}
+        >
+          {Object.keys(definitions).map(def => 
+            <MenuItem key={def} value={def}>{def.replace('#/definitions/', '')}</MenuItem>
+          )}
+          <MenuItem key={'empty'} value={'empty'}>Empty Object</MenuItem>
+        </TextField> */}
       </span>
     );
   }

@@ -16,15 +16,15 @@ import { AddCircle, DeleteForever } from 'material-ui-icons';
 
 import Operation from './Operation';
 import store from './models'
+import SchemaDialog from './SchemaDialog';
 
 const styles = theme => ({
-  width20: {
-    width: '20%'
+  iptVersion: {
+    width: '20%',
+    paddingRight: '10px'
   },
-  width80: {
-    width: '80%'
-  },
-  textField: {
+  iptTitle: {
+    width: '80%',
     paddingRight: '10px'
   },
   pathHeadline: {
@@ -45,14 +45,22 @@ class SwaggerForm extends React.Component {
   static propTypes = {
     initialValue: object.isRequired,
     classes: object.isRequired,
-  };
-
-  constructor(props) {
-    super(props);
-    store.swagger.init(props.initialValue);
   }
 
-  handleTitleChange = (e, value) => {
+  componentWillMount() {
+    store.swagger.init(this.props.initialValue, this.props.onChange);
+  }
+
+  handleTitleChange = (e) => {
+    store.swagger.setInfo({ title: e.target.value });
+  }
+  
+  handleVersionChange = (e) => {
+    store.swagger.setInfo({ version: e.target.value });
+  }
+  
+  handleDescriptionChange = (e) => {
+    store.swagger.setInfo({ description: e.target.value });
   }
 
   // 新增一个 path
@@ -82,14 +90,14 @@ class SwaggerForm extends React.Component {
               Info
             </Typography>
             <TextField
-              className={`${classes.textField} ${classes.width80}`}
+              className={classes.iptTitle}
               id="title"
               label="Title"
               value={swagger.info.title}
               onChange={this.handleTitleChange}
             />
             <TextField
-              className={`${classes.textField} ${classes.width20}`}
+              className={classes.iptVersion}
               id="version"
               label="Version"
               value={swagger.info.version}
@@ -97,10 +105,10 @@ class SwaggerForm extends React.Component {
             />
             <TextField
               fullWidth
-              className={classes.textField}
               multiline
               id="description"
               label="Description"
+              className={classes.textField}
               value={swagger.info.description}
               onChange={this.handleDescriptionChange}
             />
@@ -109,7 +117,7 @@ class SwaggerForm extends React.Component {
 
         {/* Operations */}
         {operations.map((operation, index) => (
-          <Card className={classes.card} key={`${operation.pathname}-${operation.method}-${index}`}>
+          <Card className={classes.card} key={index}>
             <CardContent>
               <Typography className={classes.pathHeadline} type="headline" component="h2">
                 <span>{operation.method.toUpperCase()} {operation.pathname}</span>
@@ -132,13 +140,11 @@ class SwaggerForm extends React.Component {
                   }
                 </span>
               </Typography>
-              <Operation 
-                /* definitions={swagger.definitions}  */
-                value={operation}
-              />
+              <Operation value={operation} />
             </CardContent>
           </Card>
         ))}
+        <SchemaDialog />
       </div>
     );
   }

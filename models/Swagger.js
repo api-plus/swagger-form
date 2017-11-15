@@ -3,11 +3,11 @@
 Swagger Object Model
 https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#swagger-object
 
-Expands pathname, method, responseArr field from Official Operation Object
+Expands operationArr field from Official Operation Object
 
 */
 
-import { action, observable } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import Operation from './Operation';
 
 export default class Swagger {
@@ -27,6 +27,7 @@ export default class Swagger {
   @observable tags;
   @observable externalDocs;
   @observable operationArr; // this field is used for ui, not in Official Operation Object
+  handleChange;
   
   static defaultValue = {
     swagger: '',
@@ -51,13 +52,25 @@ export default class Swagger {
     // Object.assign(this, Swagger.defaultValues, swagger);
   }
 
-  init(swagger) {
+  @action
+  init(swagger, handleChange) {
     Object.assign(this, Swagger.defaultValue, swagger);
-    this.operationArr = this.setOperationArr();
+    this.handleChange = handleChange;
+    this.operationArr = this.getOperationArr();
+  }
+
+  onChange() {
+    this.handleChange(this);
+  }
+
+  @action
+  setInfo(info) {
+    Object.assign(this.info, info);
+    this.onChange();
   }
 
   // 获取 operation 列表
-  setOperationArr() {
+  getOperationArr() {
     const operations = [];
     const pathnames = Object.keys(this.paths);
     for(let i = 0; i < pathnames.length; i++) {
@@ -84,6 +97,7 @@ export default class Swagger {
   @action
   addOperation(index = 0, operation = Operation.defaultValue) {
     this.operationArr.splice(index, 0, new Operation(operation));
+    this.onChange();
   }
 
   @action
@@ -92,5 +106,6 @@ export default class Swagger {
       operation.pathname === pathname && operation.method === method
     );
     this.operationArr.splice(index, 1);
+    this.onChange();
   }
 }

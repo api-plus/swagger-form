@@ -64,6 +64,31 @@ export default class Operation {
       this.responseArr.push(newResponse)
     });
   }
+  @action
+  setPathname(pathname) {
+    this.pathname = pathname;
+  }
+  
+  @action
+  setMethod(method) {
+    this.method = method;
+  }
+
+  @action
+  setConsumes(consumes) {
+    this.consumes = consumes;
+  }
+  
+  @action
+  setProduces(produces) {
+    this.produces = produces;
+  }
+  
+  @action
+  setDesc(description) {
+    this.description = description;
+  }
+
 
   @action
   addParameter(parameter) {

@@ -3,4 +3,5 @@ import UI from './UI';
 
 export default {
   swagger: new Swagger(),
+  uiStore: new UI()
 }
